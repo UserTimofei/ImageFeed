@@ -36,7 +36,10 @@ final class ProfileViewController: UIViewController {
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(descriptionLabel)
         
-        logoutButton.setImage(UIImage.Image.image(named: "Exit"), for: .normal)
+        logoutButton = UIButton.systemButton(
+            with: UIImage(named: "Exit")!,
+            target: self,
+            action: #selector(logoutButtonTap))
         logoutButton.tintColor = UIColor(named: "YP Red")
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(logoutButton)
