@@ -29,7 +29,12 @@ final class OAuth2Service {
     private init() { }
     
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
-        guard var components = URLComponents(string: "https://unsplash.com/oauth/token") else { return nil }
+        guard
+            var components = URLComponents(string: "https://unsplash.com/oauth/token")
+        else {
+            assertionFailure("Failed to create URL")
+            return nil
+        }
         components.queryItems = [
             URLQueryItem(name: "client_id", value: Constants.accessKey),
             URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
@@ -51,13 +56,24 @@ final class OAuth2Service {
     
     func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
         
-        guard let request = makeOAuthTokenRequest(code: code)
+        assert(Thread.isMainThread)
+        guard lastCode != code else {
+            completion(.failure(AuthServiceError.invalidRequest))
+            print("[fetchOAuthToken]: AuthServiceError - lastCode == code")
+            return
+        }
+        task?.cancel()
+        lastCode = code
+        
+        guard
+            let request = makeOAuthTokenRequest(code: code)
         else {
             completion(.failure(AuthServiceError.invalidRequest))
+            print("[fetchOAuthToken]: AuthServiceError ошибка конфигурации запроса")
             return
         }
         
-        let task  = URLSession.shared.objectTask(for: request) { [weak self]
+        let task  = urlSession.objectTask(for: request) { [weak self]
             (result: Result<OAuthTokenResponseBody, Error>) in
             DispatchQueue.main.async {
                 guard let self = self else { return }
@@ -98,7 +114,7 @@ extension OAuth2Service {
     private func object(for request: URLRequest, completion: @escaping (Result<OAuthTokenResponseBody, Error>) -> Void) -> URLSessionTask {
         
         let decoder = JSONDecoder()
-        return URLSession.shared.data(for: request) { (result: Result<Data, Error>) in
+        return urlSession.data(for: request) { (result: Result<Data, Error>) in
             switch result {
             case .success(let data):
                 do {
@@ -107,11 +123,12 @@ extension OAuth2Service {
                 }
                 catch {
                     completion(.failure(NetworkError.decodingError(error)))
+                    print("[OAuth2Service.object]: Ошибка декодирования: \(error.localizedDescription)")
                 }
             case .failure(let error):
                 completion(.failure(error))
+                print("[OAuth2Service.object]: Ошибка преобразования в модель: \(error.localizedDescription)")
             }
         }
     }
 }
-

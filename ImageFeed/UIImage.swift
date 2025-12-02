@@ -7,7 +7,7 @@ extension UIImage {
                     
             else {
                 assertionFailure("Изображение \(named) не найдено")
-                return UIImage()
+                return nil
             }
             return image
         }

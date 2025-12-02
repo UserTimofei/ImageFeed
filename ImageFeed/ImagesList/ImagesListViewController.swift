@@ -1,5 +1,6 @@
 import UIKit
 final class ImagesListViewController: UIViewController {
+     
     private let showsSingleImageSegueIdentifier = "ShowSingleImage"
     
     @IBOutlet private var tableView: UITableView!
@@ -49,6 +50,8 @@ extension ImagesListViewController: UITableViewDataSource {
             return UITableViewCell()
         }
 
+        cell.selectionStyle = .none
+        
         configCell(for: imageListCell, with: indexPath)
 
         return imageListCell
