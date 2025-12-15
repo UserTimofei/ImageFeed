@@ -86,6 +86,8 @@ final class ProfileViewController:
     }
     
     private func setupUI() {
+        logoutButton.addTarget(self, action: #selector(logoutButtonTap), for: .touchUpInside)
+        
         view.backgroundColor = UIColor(named: "YP Black")
         
         profilePhotoView.translatesAutoresizingMaskIntoConstraints = false
@@ -139,7 +141,30 @@ final class ProfileViewController:
     }
     
     @objc
-    private func logoutButtonTap() {
+    func logoutButtonTap() {
+        
+        let alertController = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверены, что хотите выйти?",
+            preferredStyle: .alert
+        )
+        
+        
+        let noAction = UIAlertAction(
+            title: "Нет",
+            style: .cancel)
+        
+        let yesAction = UIAlertAction(
+            title: "Да",
+            style: .destructive
+        ) { _ in
+            ProfileLogoutService.shared.logout()
+        }
+        
+        alertController.addAction(noAction)
+        alertController.addAction(yesAction)
+        
+        present(alertController, animated: true)
         
     }
     

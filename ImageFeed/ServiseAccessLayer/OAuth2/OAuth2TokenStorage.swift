@@ -20,3 +20,9 @@ final class OAuth2TokenStorage {
     }
 }
 
+extension OAuth2TokenStorage {
+    func clearToken() {
+        KeychainWrapper.standard.removeObject(forKey: "token")
+        KeychainWrapper.standard.removeObject(forKey: "refresh_token")
+    }
+}

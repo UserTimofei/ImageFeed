@@ -1,6 +1,6 @@
 import UIKit
 
-final class SplashViewController: UIViewController {
+final class SplashViewController: UIViewController, UINavigationControllerDelegate {
     private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
     
     private let profileServise = ProfileService.shared
@@ -52,22 +52,21 @@ final class SplashViewController: UIViewController {
     
     private func presentAuthViewController() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
-        guard let authViewController = storyboard.instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else {
-            assertionFailure("Не удалось найти AuthViewController по идентификатору")
+        
+        guard let navigationController = storyboard.instantiateViewController(withIdentifier: "NavigationController") as? UINavigationController else {
+            assertionFailure("Не удалось найти NavigationController по идентификатору")
             return
         }
-        authViewController.delegate = self
-        authViewController.modalPresentationStyle = .fullScreen
-        present(authViewController, animated: true)
+        if let navigationController = navigationController.viewControllers.first as? AuthViewController {
+            navigationController.delegate = self
+        }
+        
+        navigationController.modalPresentationStyle = .fullScreen
+        present(navigationController, animated: true)
     }
 
     private func switchToTabBarController() {
-        guard
-            let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate,
-            let window = sceneDelegate.window else {
-            assertionFailure("Invalid window configuration")
-            return
-        }
+       
         
         let appearace = UITabBarAppearance()
         appearace.configureWithOpaqueBackground()
@@ -80,9 +79,22 @@ final class SplashViewController: UIViewController {
         UITabBar.appearance().standardAppearance = appearace
         UITabBar.appearance().scrollEdgeAppearance = appearace
         
-        let tabBarController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "TabBarViewController")
+        guard
+            let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate,
+            let window = sceneDelegate.window else {
+            assertionFailure("Invalid window configuration")
+            return
+        }
         
+        
+        let tabBarController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "TabBarViewController")
         window.rootViewController = tabBarController
+        window.makeKeyAndVisible()
+        
+        
+        ImagesListService.shared.fetchPhotosNextPage()
+        
+        
     }
     
     private func fetchProfile(token: String) {
