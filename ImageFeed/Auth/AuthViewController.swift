@@ -1,4 +1,5 @@
 import UIKit
+import ProgressHUD
 
 protocol AuthViewControlletDelegate: AnyObject {
     func didAuthenticate(_ vc: AuthViewController)
@@ -13,20 +14,6 @@ final class AuthViewController: UIViewController {
         configureBackButton()
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == showWebViewIdentifier{
-            guard
-                let webViewViewController = segue.destination as? WebViewViewController
-            else {
-                assertionFailure("Failed to prepare for \(showWebViewIdentifier)")
-                return
-            }
-            webViewViewController.delegate = self
-        } else {
-            super.prepare(for: segue, sender: sender)
-        }
-    }
-    
     private func configureBackButton() {
         navigationController?.navigationBar.backIndicatorImage = UIImage(named: "nav_back_button")
         navigationController?.navigationBar.backIndicatorTransitionMaskImage = UIImage(named: "nav_back_button")
@@ -38,8 +25,11 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-
+        
+        UIBlockingProgressHUD.show()
         fetchOAuthToken(code) { [weak self] result in
+            
+            UIBlockingProgressHUD.dismiss()
             guard let self else { return }
             switch result {
             case .success(let token):
@@ -72,7 +62,11 @@ extension AuthViewController {
             message: "Не удалось войти в систему",
             preferredStyle: .alert
         )
-        let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
+        let okAction = UIAlertAction(
+            title: "Ок",
+            style: .default,
+            handler: nil
+        )
         alertController.addAction(okAction)
         present(alertController, animated: true, completion: nil)
     }
