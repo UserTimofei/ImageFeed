@@ -3,10 +3,7 @@ import Foundation
 extension Photo {
     init(from result: PhotoResult) {
         self.id = result.id
-        
-        let formatted = ISO8601DateFormatter()
-        self.createdAt = formatted.date(from: result.createdAt)
-        
+        self.createdAt = ISO8601DateFormatter.imageFeedISO8601.date(from: result.createdAt)
         self.welcomeDescription = result.description
         self.thumbImageURL = result.urls.thumb
         self.largeImageURL = result.urls.full
@@ -26,3 +23,4 @@ extension Array {
         return copy
     }
 }
+

@@ -96,8 +96,6 @@ final class ImagesListService {
         } else {
             request.setValue("Client-ID \(Constants.accessKey)", forHTTPHeaderField: "Authorization")
         }
-        
-        
         return request
     }
     

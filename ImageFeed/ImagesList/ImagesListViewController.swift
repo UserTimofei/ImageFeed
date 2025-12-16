@@ -11,19 +11,11 @@ final class ImagesListViewController: UIViewController {
     private var photos: [Photo] = []
     private let photoService = ImagesListService.shared
     
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        formatter.timeStyle = .none
-        return formatter
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupTableView()
         subscribeToNotifications()
-//        photoService.fetchPhotosNextPage()
     }
     
     private func setupTableView() {
@@ -93,7 +85,7 @@ extension ImagesListViewController: UITableViewDataSource {
         }
         
         if let createAt = photo.createdAt {
-            imageListCell.dateLabel.text = dateFormatter.string(from: createAt)
+            imageListCell.dateLabel.text = DateFormatter.imageFeedDisplayDate.string(from: createAt)
         } else {
             imageListCell.dateLabel.text = "-"
         }
@@ -105,7 +97,6 @@ extension ImagesListViewController: UITableViewDataSource {
 }
 
 extension ImagesListViewController: UITableViewDelegate {
-// T0D0:    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)

@@ -46,11 +46,10 @@ extension AuthViewController: WebViewViewControllerDelegate {
             guard let self else { return }
             switch result {
             case .success(let token):
- //               self.delegate?.didAuthenticate(self)
                 if let delegate = self.delegate {
                                 delegate.didAuthenticate(self)
                             } else {
-                                // ❗️Если делегата нет — значит, мы после выхода → сами переходим в TabBar
+                                
                                 self.switchToTabBarController()
                             }
                 print("Токен получен: \(token)")

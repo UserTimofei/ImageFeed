@@ -31,8 +31,6 @@ final class ProfileViewController:
             self.updateAvatar()
         }
         updateAvatar()
-        
-        
     }
     
     private func updateAvatar() {
@@ -93,19 +91,16 @@ final class ProfileViewController:
         profilePhotoView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(profilePhotoView)
         
-//        nameLabel.text = "Екатерина Новикова"
         nameLabel.textColor = UIColor(named: "YP White")
         nameLabel.font = UIFont.systemFont(ofSize: 23, weight: .bold)
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(nameLabel)
         
-//        loginLabel.text = "@ekaterina_nov"
         loginLabel.textColor = UIColor(named: "YP Gray")
         loginLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         loginLabel.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(loginLabel)
         
-//        descriptionLabel.text = "Hello, world!"
         descriptionLabel.textColor = UIColor(named: "YP White")
         descriptionLabel.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -137,7 +132,6 @@ final class ProfileViewController:
             logoutButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             logoutButton.centerYAnchor.constraint(equalTo: profilePhotoView.centerYAnchor)
         ])
-        
     }
     
     @objc
@@ -148,26 +142,21 @@ final class ProfileViewController:
             message: "Уверены, что хотите выйти?",
             preferredStyle: .alert
         )
-        
-        
-        let noAction = UIAlertAction(
-            title: "Нет",
-            style: .cancel)
-        
         let yesAction = UIAlertAction(
             title: "Да",
-            style: .destructive
+            style: .cancel
         ) { _ in
             ProfileLogoutService.shared.logout()
         }
-        
-        alertController.addAction(noAction)
+        let noAction = UIAlertAction(
+            title: "Нет",
+            style: .default
+        )
         alertController.addAction(yesAction)
-        
+        alertController.addAction(noAction)
+
         present(alertController, animated: true)
-        
     }
-    
 }
 
 
