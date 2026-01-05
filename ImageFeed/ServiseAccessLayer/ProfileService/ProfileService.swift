@@ -65,3 +65,10 @@ final class ProfileService {
         return request
     }
 }
+
+extension ProfileService {
+    func exitProfileService() {
+        self.profile = nil
+        self.task = nil
+    }
+}

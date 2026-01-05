@@ -76,3 +76,9 @@ final class  ProfileImageService {
     }
 }
 
+extension ProfileImageService  {
+    func exitProfileImageService() {
+        self.avatarURL = nil
+        self.task = nil 
+    }
+}
