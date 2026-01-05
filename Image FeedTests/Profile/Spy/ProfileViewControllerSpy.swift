@@ -1,0 +1,41 @@
+//
+//  ProfileViewControllerSpy.swift
+//  ImageFeed
+//
+//  Created by Timofei Kirichenko on 28.12.2025.
+//
+
+import ImageFeed
+import Foundation
+
+final class ProfileViewControllerSpy: ProfileViewProtocol {
+    
+    var presenter: ImageFeed.ProfilePresenterProtocol?
+    
+    var showLoadingPlaceholderCalled = false
+    var showProfieleCalled = false
+    var lastProfile: Profile?
+    var showAvatarCalled = false
+    var lastAvatarURL: URL?
+    var showLogoutAlertCalled = false
+    var logoutAlertCompletion: ((Bool) -> Void)?
+    
+    func showLoadingPlaceholder() {
+        showLoadingPlaceholderCalled = true
+    }
+    
+    func showProfile(_ profile: ImageFeed.Profile) {
+        showProfieleCalled = true
+        lastProfile = profile
+    }
+    
+    func showAvatar(url: URL?) {
+        showAvatarCalled = true
+        lastAvatarURL = url
+    }
+    
+    func showLogoutAlert(completion: @escaping (Bool) -> Void) {
+        showLogoutAlertCalled = true
+        logoutAlertCompletion = completion
+    }
+}

@@ -1,6 +1,10 @@
 import Foundation
 import WebKit
 
+public protocol ProfileLogoutServiceProtocol {
+    func logout()
+}
+
 final class ProfileLogoutService {
     static let shared = ProfileLogoutService()
     private init() {}
@@ -28,3 +32,8 @@ final class ProfileLogoutService {
 extension Notification.Name {
     static let userDidLogout = Notification.Name("userDidLogout")
 }
+
+extension ProfileLogoutService: ProfileLogoutServiceProtocol {
+    
+}
+

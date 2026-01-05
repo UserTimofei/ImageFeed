@@ -7,11 +7,16 @@ struct ProfileResult: Codable {
     let bio: String?
 }
 
-struct Profile {
+public struct Profile: Equatable {
     let username: String
     let name: String
     let loginName: String
     let bio: String?
+}
+
+public protocol ProfileServiceProtocol {
+    var profile: Profile? { get }
+    func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void)
 }
 
 final class ProfileService {
@@ -71,4 +76,8 @@ extension ProfileService {
         self.profile = nil
         self.task = nil
     }
+}
+
+extension ProfileService: ProfileServiceProtocol {
+    
 }

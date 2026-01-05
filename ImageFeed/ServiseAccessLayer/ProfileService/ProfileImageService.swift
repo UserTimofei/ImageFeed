@@ -16,6 +16,11 @@ struct UserResult: Codable {
     let profileImage: ProfileImage
 }
 
+public protocol ProfileImageServiceProtocol {
+    var avatarURL: String? { get }
+    func fetchProfileImageURL(username: String, _ completion: @escaping (Result<String, Error>) -> Void)
+}
+
 final class  ProfileImageService {
     static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     static let shared = ProfileImageService()
@@ -81,4 +86,8 @@ extension ProfileImageService  {
         self.avatarURL = nil
         self.task = nil 
     }
+}
+
+extension ProfileImageService: ProfileImageServiceProtocol {
+    
 }

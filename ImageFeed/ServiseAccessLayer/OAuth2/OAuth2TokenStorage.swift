@@ -1,6 +1,10 @@
 import Foundation
 import SwiftKeychainWrapper
 
+public protocol AuthStorageProtocol {
+    var tokenDI: String? { get }
+}
+
 final class OAuth2TokenStorage {
     static let shared = OAuth2TokenStorage()
     
@@ -25,4 +29,8 @@ extension OAuth2TokenStorage {
         KeychainWrapper.standard.removeObject(forKey: "token")
         KeychainWrapper.standard.removeObject(forKey: "refresh_token")
     }
+}
+
+extension OAuth2TokenStorage: AuthStorageProtocol {
+    var tokenDI: String? { OAuth2TokenStorage.shared.token }
 }

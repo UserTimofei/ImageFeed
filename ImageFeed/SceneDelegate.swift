@@ -22,6 +22,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
+        
+  //      if OAuth2TokenStorage.shared.token != nil {
+  //          let tabBarController = UIStoryboard(name: "Main", bundle: nil)
+  //              .instantiateViewController(withIdentifier: "TabBarViewController") as? TabBarController
+  //          window?.rootViewController = tabBarController
+  //      } else {
+  //          window?.rootViewController = SplashViewController()
+  //      }
+        
         window?.rootViewController = SplashViewController()
         window?.makeKeyAndVisible()
     }
@@ -29,32 +38,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     @objc private func handlerUserLogout() {
         
             // Очистка токена
-            OAuth2TokenStorage.shared.token = nil
-
+            //OAuth2TokenStorage.shared.token = nil
+            OAuth2TokenStorage.shared.clearToken()
             // Устанавливаем SplashViewController как root — как при первом запуске
             guard let window = window else { return }
 
             let splashVC = SplashViewController()
             window.rootViewController = splashVC
             window.makeKeyAndVisible()
-        
-        
-//        guard let windowScene = self.window, let rootVC = //windowScene.rootViewController else { return }
-//
-//        guard let authVC = UIStoryboard(name: "Main", bundle: //nil).instantiateViewController(withIdentifier: //"NavigationController") as? UINavigationController
-//        else {
-//            print("Не удалось создать экран авторизации, после выхода из //профиля.")
-//            return
-//        }
-        
-//        let navController = UINavigationController(rootViewController: authVC)
-        
-//        self.window?.rootViewController = navController
-//        self.window?.makeKeyAndVisible()
-        
-//        authVC.modalPresentationStyle = .fullScreen
-//        rootVC.present(authVC, animated: true)
     }
+    
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.

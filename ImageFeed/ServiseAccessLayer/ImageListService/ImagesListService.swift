@@ -16,7 +16,7 @@ struct UrlResult: Codable {
     let thumb: String
 }
 
-struct Photo {
+struct Photo: Equatable {
     let id: String
     let size: CGSize
     let createdAt: Date?
@@ -26,15 +26,32 @@ struct Photo {
     var isLiked: Bool
 }
 
-final class ImagesListService {
+protocol ImagesListServiceProtocol: AnyObject {
+    /// Текущий список загруженных фотографий
+    var photos: [Photo] { get }
+    
+    /// Загружает следующую страницу фотографий
+    /// После завершения публикует уведомление `.imagesListServiceDidChange`
+    func fetchPhotosNextPage()
+    
+    /// Ставит или убирает лайк у фотографии
+    /// - Parameters:
+    ///   - photoId: идентификатор фотографии
+    ///   - isLike: `true` — поставить лайк, `false` — убрать
+    ///   - completion: результат операции
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void)
+}
+
+final class ImagesListService: ImagesListServiceProtocol {
     static let shared = ImagesListService()
 //    private init() {}
     
     // Хранилище данных
     private(set) var photos: [Photo] = []
     
+    
     // Уведомление для UI
-    static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
+//    static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     
     // Управление загрузкой
     private var lastLoadedPage: Int = 0
@@ -59,7 +76,7 @@ final class ImagesListService {
                     self?.photos.append(contentsOf: newPhotos)
                     self?.lastLoadedPage = nextPage
                     NotificationCenter.default.post(
-                        name: ImagesListService.didChangeNotification,
+                        name: .imagesListServiceDidChange,
                         object:
                             self
                     )
@@ -132,7 +149,7 @@ final class ImagesListService {
                     
                     self.photos = self.photos.withReplaced(itemAt: index, newValue: newPhoto)
                 }
-                NotificationCenter.default.post(name: ImagesListService.didChangeNotification, object: self)
+                NotificationCenter.default.post(name: .imagesListServiceDidChange, object: self)
                 completion(.success(()))
                 
             case .failure(let error):
@@ -191,4 +208,10 @@ extension ImagesListService {
         self.task = nil
         self.lastLoadedPage = 0
     }
+}
+
+// Объявляем уведомление как часть протокола (через extension)
+// Это позволяет использовать его в Presenter'е без привязки к конкретному классу
+extension Notification.Name {
+    static let imagesListServiceDidChange = Notification.Name("ImagesListService.didChangeNotification")
 }
