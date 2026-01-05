@@ -24,22 +24,18 @@ final class Image_FeedUITests: XCTestCase {
         if !authButton.exists {
                 print("🔍 Пользователь уже залогинен. Выполняем logout через UI...")
 
-                // Переходим в профиль
                 let profileTab = app.tabBars.buttons.element(boundBy: 1)
                 XCTAssertTrue(profileTab.waitForExistence(timeout: 10), "Tab bar not found")
                 profileTab.tap()
 
-                // Нажимаем "Logout"
                 let logoutButton = app.buttons["LogoutButton"]
                 XCTAssertTrue(logoutButton.waitForExistence(timeout: 10), "Logout button not found")
                 logoutButton.tap()
 
-                // Подтверждаем в алерте
                 let alertYesButton = app.alerts["Пока, пока!"].buttons["Да"]
                 XCTAssertTrue(alertYesButton.waitForExistence(timeout: 5), "Alert 'Да' not found")
                 alertYesButton.tap()
 
-                // Ждём возврата на стартовый экран
                 XCTAssertTrue(authButton.waitForExistence(timeout: 15), "Authenticate button did not appear after logout")
             }
         
@@ -53,7 +49,7 @@ final class Image_FeedUITests: XCTestCase {
         XCTAssertTrue(loginTextField.waitForExistence(timeout: 20))
         
         loginTextField.tap()
-        loginTextField.typeText("kirichenko.tmf@yandex.ru")
+        loginTextField.typeText("")
         hideKeyboard()
         
         webView.swipeUp()
@@ -62,7 +58,7 @@ final class Image_FeedUITests: XCTestCase {
         XCTAssertTrue(passwordTextFaild.waitForExistence(timeout: 10))
         
         passwordTextFaild.tap()
-        passwordTextFaild.typeText("641$720$KtO")
+        passwordTextFaild.typeText("")
         webView.swipeUp()
         
         hideKeyboard()
