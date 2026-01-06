@@ -12,7 +12,6 @@ extension Photo {
     }
 }
 
-
 extension Array {
     func withReplaced(itemAt index: Int, newValue: Element) -> Array {
         guard index >= 0 && index < count else {

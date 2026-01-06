@@ -1,6 +1,6 @@
 @testable import ImageFeed
 
-class MockLogoutService: ProfileLogoutServiceProtocol {
+final class MockLogoutService: ProfileLogoutServiceProtocol {
     var logoutCalled = false
     
     func logout() {

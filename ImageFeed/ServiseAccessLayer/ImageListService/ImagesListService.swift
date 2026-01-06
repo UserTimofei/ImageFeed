@@ -27,33 +27,16 @@ struct Photo: Equatable {
 }
 
 protocol ImagesListServiceProtocol: AnyObject {
-    /// Текущий список загруженных фотографий
     var photos: [Photo] { get }
-    
-    /// Загружает следующую страницу фотографий
-    /// После завершения публикует уведомление `.imagesListServiceDidChange`
     func fetchPhotosNextPage()
-    
-    /// Ставит или убирает лайк у фотографии
-    /// - Parameters:
-    ///   - photoId: идентификатор фотографии
-    ///   - isLike: `true` — поставить лайк, `false` — убрать
-    ///   - completion: результат операции
     func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 final class ImagesListService: ImagesListServiceProtocol {
-    static let shared = ImagesListService()
-//    private init() {}
     
-    // Хранилище данных
+    static let shared = ImagesListService()
     private(set) var photos: [Photo] = []
     
-    
-    // Уведомление для UI
-//    static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
-    
-    // Управление загрузкой
     private var lastLoadedPage: Int = 0
     private var task: URLSessionTask?
     
@@ -162,8 +145,6 @@ final class ImagesListService: ImagesListServiceProtocol {
         task.resume()
     }
     
-    
-    
     private func makeLikeRequest(id: String) -> URLRequest? {
         guard let url = URL(string: "https://api.unsplash.com/photos/\(id)/like")
         else {
@@ -193,14 +174,13 @@ final class ImagesListService: ImagesListServiceProtocol {
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
         guard let token = OAuth2TokenStorage.shared.token else {
-                print("[makeUnlikeRequest]: Авторизационный токен отсутствует")
-                return nil
-            }
+            print("[makeUnlikeRequest]: Авторизационный токен отсутствует")
+            return nil
+        }
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
     }
 }
-
 
 extension ImagesListService {
     func exitImagesListService() {
@@ -210,8 +190,6 @@ extension ImagesListService {
     }
 }
 
-// Объявляем уведомление как часть протокола (через extension)
-// Это позволяет использовать его в Presenter'е без привязки к конкретному классу
 extension Notification.Name {
     static let imagesListServiceDidChange = Notification.Name("ImagesListService.didChangeNotification")
 }

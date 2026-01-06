@@ -1,11 +1,10 @@
 @testable import ImageFeed
 import Foundation
 
-enum ProfileImageServicError: Error {
+enum ProfileImageServiceError: Error {
     case notFound
 }
-
-class MockImageService: ProfileImageServiceProtocol {
+final class MockImageService: ProfileImageServiceProtocol {
     
     var fetchProfileImageURLResult: Result<String, Error> = .success("https://example.com/avatar.jpg")
     var fetchProfileImageURLCalled = false
@@ -16,5 +15,4 @@ class MockImageService: ProfileImageServiceProtocol {
         avatarURL = username
         completion(fetchProfileImageURLResult)
     }
-    
 }

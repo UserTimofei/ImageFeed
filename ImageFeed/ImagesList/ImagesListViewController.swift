@@ -21,7 +21,6 @@ final class ImagesListViewController: UIViewController, ImagesListViewProtocol {
     
     private var photos: [Photo] = []
     private var previosPhotoCount: Int = 0
-//    private let photoService = ImagesListService.shared
     
     var presenter: ImagesListPresenterProtocol?
     
@@ -29,7 +28,7 @@ final class ImagesListViewController: UIViewController, ImagesListViewProtocol {
         super.viewDidLoad()
         
         print("✅ ImagesListViewController viewDidLoad called")
-            print("   tableView = \(String(describing: tableView))")
+        print("   tableView = \(String(describing: tableView))")
         
         setupTableView()
         presenter?.viewDidLoad()
@@ -63,11 +62,11 @@ final class ImagesListViewController: UIViewController, ImagesListViewProtocol {
     
     func presentSingleImage(photo: Photo) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            guard let vc = storyboard.instantiateViewController(withIdentifier: "ShowSingleImage") as? SingleImageViewController else {
-                return
-            }
-            vc.photo = photo
-            present(vc, animated: true)
+        guard let vc = storyboard.instantiateViewController(withIdentifier: "ShowSingleImage") as? SingleImageViewController else {
+            return
+        }
+        vc.photo = photo
+        present(vc, animated: true)
     }
     
     private func setupTableView() {
@@ -75,11 +74,11 @@ final class ImagesListViewController: UIViewController, ImagesListViewProtocol {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-              tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-              tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-              tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-              tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-          ])
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        ])
     }
     
     private func subscribeToNotifications() {
@@ -95,8 +94,8 @@ final class ImagesListViewController: UIViewController, ImagesListViewProtocol {
         
         print("🔄 updateTableViewAnimated called")
         print("   tableView = \(String(describing: tableView))")
-            
-            guard let tableView = tableView else { return } 
+        
+        guard let tableView = tableView else { return } 
         
         let oldCount = previosPhotoCount
         let newCount = photos.count
@@ -153,14 +152,14 @@ extension ImagesListViewController: UITableViewDataSource {
 }
 
 extension ImagesListViewController: UITableViewDelegate {
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            guard let vc = storyboard.instantiateViewController(withIdentifier: "ShowSingleImage") as? SingleImageViewController else {
-                return
-            }
-            vc.photo = photos[indexPath.row]
-            present(vc, animated: true)
+        guard let vc = storyboard.instantiateViewController(withIdentifier: "ShowSingleImage") as? SingleImageViewController else {
+            return
+        }
+        vc.photo = photos[indexPath.row]
+        present(vc, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -183,11 +182,11 @@ extension ImagesListViewController: UITableViewDelegate {
         }
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-            let lastRowIndex = photos.count - 1
-            if indexPath.row == lastRowIndex {
-                presenter?.didScrollBottom()
-            }
+        let lastRowIndex = photos.count - 1
+        if indexPath.row == lastRowIndex {
+            presenter?.didScrollBottom()
         }
+    }
 }
 
 extension ImagesListViewController: ImageListCellDelegate {

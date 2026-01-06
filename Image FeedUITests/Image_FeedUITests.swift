@@ -12,9 +12,9 @@ final class Image_FeedUITests: XCTestCase {
     private let app = XCUIApplication()
     
     override func setUpWithError() throws {
-       
+        
         continueAfterFailure = false
-
+        app.launchArguments = ["-UITesting"]
         app.launch()
     }
     
@@ -22,22 +22,22 @@ final class Image_FeedUITests: XCTestCase {
         let authButton = app.buttons["Authenticate"]
         
         if !authButton.exists {
-                print("🔍 Пользователь уже залогинен. Выполняем logout через UI...")
-
-                let profileTab = app.tabBars.buttons.element(boundBy: 1)
-                XCTAssertTrue(profileTab.waitForExistence(timeout: 10), "Tab bar not found")
-                profileTab.tap()
-
-                let logoutButton = app.buttons["LogoutButton"]
-                XCTAssertTrue(logoutButton.waitForExistence(timeout: 10), "Logout button not found")
-                logoutButton.tap()
-
-                let alertYesButton = app.alerts["Пока, пока!"].buttons["Да"]
-                XCTAssertTrue(alertYesButton.waitForExistence(timeout: 5), "Alert 'Да' not found")
-                alertYesButton.tap()
-
-                XCTAssertTrue(authButton.waitForExistence(timeout: 15), "Authenticate button did not appear after logout")
-            }
+            print("🔍 Пользователь уже залогинен. Выполняем logout через UI...")
+            
+            let profileTab = app.tabBars.buttons.element(boundBy: 1)
+            XCTAssertTrue(profileTab.waitForExistence(timeout: 10), "Tab bar not found")
+            profileTab.tap()
+            
+            let logoutButton = app.buttons["LogoutButton"]
+            XCTAssertTrue(logoutButton.waitForExistence(timeout: 10), "Logout button not found")
+            logoutButton.tap()
+            
+            let alertYesButton = app.alerts["Пока, пока!"].buttons["Да"]
+            XCTAssertTrue(alertYesButton.waitForExistence(timeout: 5), "Alert 'Да' not found")
+            alertYesButton.tap()
+            
+            XCTAssertTrue(authButton.waitForExistence(timeout: 15), "Authenticate button did not appear after logout")
+        }
         
         authButton.tap()
         
@@ -49,7 +49,7 @@ final class Image_FeedUITests: XCTestCase {
         XCTAssertTrue(loginTextField.waitForExistence(timeout: 20))
         
         loginTextField.tap()
-        loginTextField.typeText("")
+        loginTextField.typeText("kirichenko.tmf@yandex.ru")
         hideKeyboard()
         
         webView.swipeUp()
@@ -58,7 +58,7 @@ final class Image_FeedUITests: XCTestCase {
         XCTAssertTrue(passwordTextFaild.waitForExistence(timeout: 10))
         
         passwordTextFaild.tap()
-        passwordTextFaild.typeText("")
+        passwordTextFaild.typeText("641$720$KtO")
         webView.swipeUp()
         
         hideKeyboard()
@@ -79,18 +79,18 @@ final class Image_FeedUITests: XCTestCase {
         
         let cell = tableQuery.children(matching: .cell).element(boundBy: 0)
         cell.swipeUp()
-
+        
         sleep(2)
-
+        
         let cellToLike = tableQuery.children(matching: .cell).element(boundBy: 1)
-
+        
         cellToLike.buttons["NoActive"].tap()
         cellToLike.buttons["Active"].tap()
-
+        
         sleep(3)
-
+        
         cellToLike.tap()
-
+        
         sleep(3)
         
         let image = app.scrollViews.images.element(boundBy: 0)
@@ -108,13 +108,17 @@ final class Image_FeedUITests: XCTestCase {
     func testProfile() throws {
         sleep(3)
         app.tabBars.buttons.element(boundBy: 1).tap()
-
+        
         XCTAssertTrue(app.staticTexts["ProfileNameLabel"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.staticTexts["ProfileUsernameLabel"].waitForExistence(timeout: 10))
-
+        
         app.buttons["LogoutButton"].tap()
-
+        
         app.alerts["Пока, пока!"].scrollViews.otherElements.buttons["Да"].tap()
+        
+        
+        let authButton = app.buttons["Authenticate"]
+        XCTAssertTrue(authButton.waitForExistence(timeout: 10), "Authentication screen did not appear after logout")
     }
     
     func hideKeyboard() {

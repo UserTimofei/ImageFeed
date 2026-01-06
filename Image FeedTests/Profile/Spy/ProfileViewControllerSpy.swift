@@ -13,7 +13,7 @@ final class ProfileViewControllerSpy: ProfileViewProtocol {
     var presenter: ImageFeed.ProfilePresenterProtocol?
     
     var showLoadingPlaceholderCalled = false
-    var showProfieleCalled = false
+    var showProfileCalled = false
     var lastProfile: Profile?
     var showAvatarCalled = false
     var lastAvatarURL: URL?
@@ -25,7 +25,7 @@ final class ProfileViewControllerSpy: ProfileViewProtocol {
     }
     
     func showProfile(_ profile: ImageFeed.Profile) {
-        showProfieleCalled = true
+        showProfileCalled = true
         lastProfile = profile
     }
     

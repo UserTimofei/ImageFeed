@@ -2,7 +2,7 @@ import Foundation
 import SwiftKeychainWrapper
 
 public protocol AuthStorageProtocol {
-    var tokenDI: String? { get }
+    var tokenID: String? { get }
 }
 
 final class OAuth2TokenStorage {
@@ -32,5 +32,5 @@ extension OAuth2TokenStorage {
 }
 
 extension OAuth2TokenStorage: AuthStorageProtocol {
-    var tokenDI: String? { OAuth2TokenStorage.shared.token }
+    var tokenID: String? { OAuth2TokenStorage.shared.token }
 }

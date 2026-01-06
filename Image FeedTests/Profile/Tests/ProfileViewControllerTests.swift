@@ -12,11 +12,11 @@ final class ProfileViewControllerTests: XCTestCase {
     func testViewDidLoadCallsPresenterViewDidLoad() {
         let sut = ProfileViewController()
         let presenterSpy = ProfilePresenterSpy()
-
+        
         sut.configure(with: presenterSpy)
-
+        
         _ = sut.view
-
+        
         XCTAssertTrue(presenterSpy.viewDidLoadCalled)
     }
 }

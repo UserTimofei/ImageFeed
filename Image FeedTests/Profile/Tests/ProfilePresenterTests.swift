@@ -39,7 +39,7 @@ final class ProfilePresenterTests: XCTestCase {
         super.tearDown()
     }
     
-    func testViewDidLoad_WhenTokenExistis_CallsFetchProfile() {
+    func testViewDidLoad_WhenTokenExists_CallsFetchProfile() {
         mockAuthStorage.tokenDI = "valid_token"
         
         sut.viewDidLoad()
@@ -62,11 +62,11 @@ final class ProfilePresenterTests: XCTestCase {
         mockAuthStorage.tokenDI = "token"
         
         let profile = Profile(
-                    username: "test_user",
-                    name: "Test User",
-                    loginName: "@test_user",
-                    bio: "Bio"
-                )
+            username: "test_user",
+            name: "Test User",
+            loginName: "@test_user",
+            bio: "Bio"
+        )
         mockProfileService.fetchProfileResult = .success(profile)
         mockImageService.fetchProfileImageURLResult = .success("https://example.com/avatar.jpg")
         
@@ -99,37 +99,37 @@ final class ProfilePresenterTests: XCTestCase {
         mockAuthStorage.tokenDI = "token"
         let profile = Profile(username: "user", name: "Name", loginName: "@user", bio: nil)
         mockProfileService.fetchProfileResult = .success(profile)
-        mockImageService.fetchProfileImageURLResult = .failure(ProfileImageServicError.notFound)
+        mockImageService.fetchProfileImageURLResult = .failure(ProfileImageServiceError.notFound)
         
-
+        
         sut.viewDidLoad()
         waitForMainQueue()
         
-
+        
         XCTAssertTrue(viewSpy.showProfileCalled)
         XCTAssertTrue(viewSpy.showAvatarCalled)
         XCTAssertNil(viewSpy.lastAvatarURL)
     }
     
     func testLogoutButtonTapped_WhenUserConfirms_CallsLogoutService() {
-            sut.logoutButtonTapped()
-            viewSpy.logoutAlertCompletion?(true)
+        sut.logoutButtonTapped()
+        viewSpy.logoutAlertCompletion?(true)
         
-            XCTAssertTrue(mockLogoutService.logoutCalled)
-        }
+        XCTAssertTrue(mockLogoutService.logoutCalled)
+    }
     
     func testLogoutButtonTapped_WhenUserCancels_DoesNotCallLogoutService() {
-            sut.logoutButtonTapped()
-            viewSpy.logoutAlertCompletion?(false)
-            
-            XCTAssertFalse(mockLogoutService.logoutCalled)
-        }
+        sut.logoutButtonTapped()
+        viewSpy.logoutAlertCompletion?(false)
         
+        XCTAssertFalse(mockLogoutService.logoutCalled)
+    }
+    
     private func waitForMainQueue() {
-            let expectation = XCTestExpectation()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
-                expectation.fulfill()
-            }
-            wait(for: [expectation], timeout: 1.0)
+        let expectation = XCTestExpectation()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.01) {
+            expectation.fulfill()
         }
+        wait(for: [expectation], timeout: 1.0)
+    }
 }

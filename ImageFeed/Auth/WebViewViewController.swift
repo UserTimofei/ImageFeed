@@ -33,10 +33,10 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
         webView.navigationDelegate = self
         presenter?.viewDidLoad()
         estimatedProgressObservation = webView.observe(\.estimatedProgress,
-            options: [],
-            changeHandler: { [weak self] _, _ in
+                                                        options: [],
+                                                        changeHandler: { [weak self] _, _ in
             self?.presenter?.didUpdateProgressValue(self?.webView.estimatedProgress ?? 0)
-            })
+        })
         
         print("💡 viewDidLoad completed")
         
@@ -75,6 +75,5 @@ extension WebViewViewController: WKNavigationDelegate {
         }
         return nil
     }
-    
 }
     

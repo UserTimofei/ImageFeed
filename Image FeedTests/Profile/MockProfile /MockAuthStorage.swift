@@ -1,5 +1,5 @@
 @testable import ImageFeed
- 
-class MockAuthStorage: AuthStorageProtocol {
+
+final class MockAuthStorage: AuthStorageProtocol {
     var tokenDI: String?
 }

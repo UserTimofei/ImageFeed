@@ -1,13 +1,13 @@
 import UIKit
 import ProgressHUD
 
-protocol AuthViewControlletDelegate: AnyObject {
+protocol AuthViewControllerDelegate: AnyObject {
     func didAuthenticate(_ vc: AuthViewController)
 }
 
 final class AuthViewController: UIViewController {
     private let showWebViewSegueIdentifier = "ShowWebView"
-    weak var delegate: AuthViewControlletDelegate?
+    weak var delegate: AuthViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,11 +51,11 @@ extension AuthViewController: WebViewViewControllerDelegate {
             switch result {
             case .success(let token):
                 if let delegate = self.delegate {
-                                delegate.didAuthenticate(self)
-                            } else {
-                                
-                                self.switchToTabBarController()
-                            }
+                    delegate.didAuthenticate(self)
+                } else {
+                    
+                    self.switchToTabBarController()
+                }
                 print("Токен получен: \(token)")
             case let .failure(error):
                 print("Ошибка при аунтефикации: \(error.localizedDescription)")
@@ -65,7 +65,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
             UIBlockingProgressHUD.dismiss()
         }
     }
-
+    
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         vc.dismiss(animated: true)
     }
@@ -105,16 +105,16 @@ extension AuthViewController {
             return
         }
         
-        let appearace = UITabBarAppearance()
-        appearace.configureWithOpaqueBackground()
-        appearace.backgroundColor = UIColor(named: "YP Black")
-        appearace.stackedLayoutAppearance.normal.iconColor = .ypWhite
-        appearace.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.ypWhite]
-        appearace.stackedLayoutAppearance.selected.iconColor = .ypBlue
-        appearace.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.ypBlue]
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(named: "YP Black")
+        appearance.stackedLayoutAppearance.normal.iconColor = .ypWhite
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.ypWhite]
+        appearance.stackedLayoutAppearance.selected.iconColor = .ypBlue
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.ypBlue]
         
-        UITabBar.appearance().standardAppearance = appearace
-        UITabBar.appearance().scrollEdgeAppearance = appearace
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
         
         let tabBarController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "TabBarViewController")
         

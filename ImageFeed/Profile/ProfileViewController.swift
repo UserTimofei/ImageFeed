@@ -99,9 +99,6 @@ final class ProfileViewController:
     }
 }
 
-
-
-
 extension ProfileViewController {
     
     func showLoadingPlaceholder() {

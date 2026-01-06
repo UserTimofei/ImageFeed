@@ -26,7 +26,7 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
             object: nil,
             queue: .main
         ) { [weak self] _ in
-            guard let self = self else { return }
+            guard let self else { return }
             self.view?.updatePhotos(self.photoService.photos)
             self.view?.updateTableViewAnimated()
         }
@@ -40,17 +40,24 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
     }
     
     func didScrollBottom() {
+        
+#if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-UITesting") {
+            return
+        }
+#endif
+        
         photoService.fetchPhotosNextPage()
     }
     
-   func didTapLike(photoId: String, isLiked: Bool, at indexPath: IndexPath) {
-       view?.showLoadingIndicator()
-       photoService.changeLike(photoId: photoId, isLike: isLiked) { [weak self] result in
-           // Передаём всё, что нужно, явно — без захвата замыкания
-           self?.handleLikeResult(result, at: indexPath)
-       }
-   }
-
+    func didTapLike(photoId: String, isLiked: Bool, at indexPath: IndexPath) {
+        view?.showLoadingIndicator()
+        photoService.changeLike(photoId: photoId, isLike: isLiked) { [weak self] result in
+            // Передаём всё, что нужно, явно — без захвата замыкания
+            self?.handleLikeResult(result, at: indexPath)
+        }
+    }
+    
     private func handleLikeResult(_ result: Result<Void, Error>, at indexPath: IndexPath) {
         DispatchQueue.main.async {
             self.view?.hideLoadingIndicator()
@@ -68,7 +75,5 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
         view?.presentSingleImage(photo: photo)
         
     }
-    
-    
 }
 

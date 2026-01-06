@@ -12,7 +12,7 @@ extension Photo {
         largeImageURL: String = "https://example.com/large.jpg",
         isLiked: Bool = false
     ) -> Photo {
-        return Photo(
+        Photo(
             id: id,
             size: size,
             createdAt: createdAt,

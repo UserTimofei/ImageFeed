@@ -1,6 +1,5 @@
 @testable import ImageFeed
 
-
 extension Profile {
     static func stub(
         username: String = "test",

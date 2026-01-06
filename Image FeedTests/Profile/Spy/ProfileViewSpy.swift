@@ -30,6 +30,4 @@ class ProfileViewSpy: ProfileViewProtocol {
         showLogoutAlertCalled = true
         logoutAlertCompletion = completion
     }
-    
-    
 }

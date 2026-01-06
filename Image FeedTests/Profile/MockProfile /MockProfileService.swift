@@ -5,7 +5,7 @@ enum ProfileServiceError: Error {
     case network
 }
 
-class MockProfileService: ProfileServiceProtocol {
+final class MockProfileService: ProfileServiceProtocol {
     var profile: ImageFeed.Profile?
     var fetchProfileResult: Result<Profile, Error> = .success(Profile.stub())
     var fetchProfileCalled = false

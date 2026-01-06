@@ -1,6 +1,6 @@
 import Foundation
 
- public protocol ProfilePresenterProtocol {
+public protocol ProfilePresenterProtocol {
     var view: ProfileViewProtocol? { get set }
     func viewDidLoad()
     func logoutButtonTapped()
@@ -24,7 +24,7 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     
     func viewDidLoad() {
         print("🟢 ProfilePresenter.viewDidLoad called")
-        guard let tokenDI = authStorage.tokenDI else {
+        guard let tokenDI = authStorage.tokenID else {
             print("🔴 No token found")
             view?.showLoadingPlaceholder()
             return
