@@ -12,11 +12,11 @@ final class OAuth2Service {
     
     private let tokenStorage = OAuth2TokenStorage.shared
     private let urlSession = URLSession.shared
-
+    
     private var task: URLSessionTask?
-
+    
     private var lastCode: String?
-
+    
     private(set) var authToken: String? {
         get {
             return tokenStorage.token
@@ -82,13 +82,13 @@ final class OAuth2Service {
                     let authToken = body.accessToken
                     self.authToken = authToken
                     completion(.success(authToken))
-                               
-                               self.task = nil
-                               self.lastCode = nil
+                    
+                    self.task = nil
+                    self.lastCode = nil
                 case .failure(let error):
                     print("[fetchOAuthToken]: Ошибка запроса: \(error.localizedDescription)")
                     completion(.failure(error))
-                               
+                    
                     self.task = nil
                     self.lastCode = nil
                 }
@@ -99,16 +99,15 @@ final class OAuth2Service {
     }
     
     private struct OAuthTokenResponseBody: Codable {
-            let accessToken: String
-            let tokenType: String
-            let refreshToken: String?
-            let scope: String
-            let createdAt: Int
-            let userId: Int
-            let username: String
+        let accessToken: String
+        let tokenType: String
+        let refreshToken: String?
+        let scope: String
+        let createdAt: Int
+        let userId: Int
+        let username: String
     }
 }
-
 
 extension OAuth2Service {
     private func object(for request: URLRequest, completion: @escaping (Result<OAuthTokenResponseBody, Error>) -> Void) -> URLSessionTask {

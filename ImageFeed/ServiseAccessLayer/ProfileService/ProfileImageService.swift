@@ -16,11 +16,16 @@ struct UserResult: Codable {
     let profileImage: ProfileImage
 }
 
+public protocol ProfileImageServiceProtocol {
+    var avatarURL: String? { get }
+    func fetchProfileImageURL(username: String, _ completion: @escaping (Result<String, Error>) -> Void)
+}
+
 final class  ProfileImageService {
     static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     static let shared = ProfileImageService()
     private init() {}
-
+    
     private var task: URLSessionTask?
     private(set) var avatarURL: String?
     
@@ -44,11 +49,11 @@ final class  ProfileImageService {
             switch result {
             case .success(let userResult):
                 guard let self else { return }
-                    self.avatarURL = userResult.profileImage.small
-                    completion(.success(userResult.profileImage.small))
-                    
-                    NotificationCenter.default
-                        .post(
+                self.avatarURL = userResult.profileImage.small
+                completion(.success(userResult.profileImage.small))
+                
+                NotificationCenter.default
+                    .post(
                         name: ProfileImageService.didChangeNotification,
                         object: self,
                         userInfo: ["URL": self.avatarURL ?? ""]
@@ -61,7 +66,7 @@ final class  ProfileImageService {
         self.task = task
         task.resume()
     }
-
+    
     private func makeProfileImageRequest(username: String, token: String) -> URLRequest? {
         
         guard let url = URL(string: "https://api.unsplash.com/users/\(username)")
@@ -79,6 +84,10 @@ final class  ProfileImageService {
 extension ProfileImageService  {
     func exitProfileImageService() {
         self.avatarURL = nil
-        self.task = nil 
+        self.task = nil
     }
+}
+
+extension ProfileImageService: ProfileImageServiceProtocol {
+    
 }

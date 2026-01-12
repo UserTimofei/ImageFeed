@@ -1,21 +1,72 @@
 import UIKit
 import Kingfisher
+import Foundation
 
-final class ImagesListViewController: UIViewController {
-     
+protocol ImagesListViewProtocol: AnyObject {
+    func updateTableViewAnimated()
+    func showLoadingIndicator()
+    func hideLoadingIndicator()
+    func showError(_ error: Error)
+    func presentSingleImage(photo: Photo)
+    func reloadRow(at indexPath: IndexPath)
+    func updatePhotos(_ photos: [Photo])
+}
+
+final class ImagesListViewController: UIViewController, ImagesListViewProtocol {
+    
     private let showsSingleImageSegueIdentifier = "ShowSingleImage"
     private let pleceholderImage = UIImage(named: "stub")
     
     @IBOutlet private var tableView: UITableView!
     
     private var photos: [Photo] = []
-    private let photoService = ImagesListService.shared
+    private var previosPhotoCount: Int = 0
+    
+    var presenter: ImagesListPresenterProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        print("✅ ImagesListViewController viewDidLoad called")
+        print("   tableView = \(String(describing: tableView))")
+        
         setupTableView()
-        subscribeToNotifications()
+        presenter?.viewDidLoad()
+    }
+    
+    func configure(with presenter: ImagesListPresenterProtocol) {
+        self.presenter = presenter
+        self.presenter?.view = self
+    }
+    
+    func updatePhotos(_ photos: [Photo]) {
+        self.photos = photos
+        self.previosPhotoCount = 0
+    }
+    
+    func reloadRow(at indexPath: IndexPath) {
+        tableView.reloadRows(at: [indexPath], with: .automatic)
+    }
+    
+    func showLoadingIndicator() {
+        UIBlockingProgressHUD.show()
+    }
+    
+    func hideLoadingIndicator() {
+        UIBlockingProgressHUD.dismiss()
+    }
+    
+    func showError(_ error: Error) {
+        print("Ошибка: \(error.localizedDescription)")
+    }
+    
+    func presentSingleImage(photo: Photo) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let vc = storyboard.instantiateViewController(withIdentifier: "ShowSingleImage") as? SingleImageViewController else {
+            return
+        }
+        vc.photo = photo
+        present(vc, animated: true)
     }
     
     private func setupTableView() {
@@ -23,39 +74,43 @@ final class ImagesListViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-              tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-              tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-              tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-              tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
-          ])
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        ])
     }
     
     private func subscribeToNotifications() {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(updateTableViewAnimated),
-            name: ImagesListService.didChangeNotification,
+            name: .imagesListServiceDidChange,
             object: nil
         )
     }
     
-    @objc private func updateTableViewAnimated() {
-        let oldCount = photos.count
-        let newPhotos = photoService.photos
-        let newCount = newPhotos.count
+    @objc func updateTableViewAnimated() {
         
-        guard newCount > oldCount else {
+        print("🔄 updateTableViewAnimated called")
+        print("   tableView = \(String(describing: tableView))")
+        
+        guard let tableView = tableView else { return } 
+        
+        let oldCount = previosPhotoCount
+        let newCount = photos.count
+        
+        guard newCount <= oldCount else {
             if newCount != oldCount {
-                photos = newPhotos
                 tableView.reloadData()
             }
             return
         }
         let indexPaths = (oldCount ..< newCount).map { IndexPath(row: $0, section: 0)}
         tableView.performBatchUpdates {
-            self.photos = newPhotos
             tableView.insertRows(at: indexPaths, with: .automatic)
         }
+        previosPhotoCount = newCount
     }
 }
 
@@ -97,14 +152,14 @@ extension ImagesListViewController: UITableViewDataSource {
 }
 
 extension ImagesListViewController: UITableViewDelegate {
-
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            guard let vc = storyboard.instantiateViewController(withIdentifier: "ShowSingleImage") as? SingleImageViewController else {
-                return
-            }
-            vc.photo = photos[indexPath.row]
-            present(vc, animated: true)
+        guard let vc = storyboard.instantiateViewController(withIdentifier: "ShowSingleImage") as? SingleImageViewController else {
+            return
+        }
+        vc.photo = photos[indexPath.row]
+        present(vc, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -127,30 +182,18 @@ extension ImagesListViewController: UITableViewDelegate {
         }
     }
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-            let lastRowIndex = photos.count - 1
-            if indexPath.row == lastRowIndex {
-                photoService.fetchPhotosNextPage()
-            }
+        let lastRowIndex = photos.count - 1
+        if indexPath.row == lastRowIndex {
+            presenter?.didScrollBottom()
         }
+    }
 }
 
 extension ImagesListViewController: ImageListCellDelegate {
     func imageListCellDidTapLike(_ cell: ImagesListCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         let photo = photos[indexPath.row]
-        UIBlockingProgressHUD.show()
-        photoService.changeLike(photoId: photo.id, isLike: !photo.isLiked) { result in
-            switch result {
-            case .success:
-                self.photos = self.photoService.photos
-                cell.setIsLiked(self.photos[indexPath.row].isLiked)
-                
-                UIBlockingProgressHUD.dismiss()
-                
-            case .failure(let error):
-                UIBlockingProgressHUD.dismiss()
-                print("Ошибка лайка: \(error.localizedDescription)")
-            }
-        }
+        
+        presenter?.didTapLike(photoId: photo.id, isLiked: !photo.isLiked, at: indexPath)
     }
 }

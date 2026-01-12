@@ -144,6 +144,7 @@
                             </scrollView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eIi-FP-0bA">
                                 <rect key="frame" x="8" y="67" width="48" height="48"/>
+                                <accessibility key="accessibilityConfiguration" identifier="BackButton"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="48" id="5NE-CC-MjV"/>
                                     <constraint firstAttribute="height" constant="48" id="aJd-6l-y9y"/>
@@ -198,9 +199,10 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jtA-Ov-7gx" userLabel="Entrance">
+                            <button opaque="NO" contentMode="scaleToFill" restorationIdentifier="Authenticate" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jtA-Ov-7gx" userLabel="Entrance">
                                 <rect key="frame" x="16" y="612" width="361" height="48"/>
                                 <color key="backgroundColor" name="YP White"/>
+                                <accessibility key="accessibilityConfiguration" identifier="Authenticate"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="jfn-5w-mmI">
                                         <userDefinedRuntimeAttributes>
@@ -270,7 +272,7 @@
         <!--Web View View Controller-->
         <scene sceneID="12B-3Z-FRj">
             <objects>
-                <viewController id="TOh-0S-Tb0" customClass="WebViewViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="WebViewViewController" id="TOh-0S-Tb0" customClass="WebViewViewController" customModule="ImageFeed" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="4fG-Z9-Ncb">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -291,6 +293,7 @@
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="nSC-JL-CSL"/>
                         <color key="backgroundColor" name="YP White"/>
+                        <accessibility key="accessibilityConfiguration" identifier="UnsplashWebView"/>
                         <constraints>
                             <constraint firstItem="nSC-JL-CSL" firstAttribute="top" secondItem="3Sz-OE-nQe" secondAttribute="top" id="02Y-Ho-GEH"/>
                             <constraint firstItem="nSC-JL-CSL" firstAttribute="trailing" secondItem="WNL-Wm-14b" secondAttribute="trailing" id="BWi-ZC-rof"/>

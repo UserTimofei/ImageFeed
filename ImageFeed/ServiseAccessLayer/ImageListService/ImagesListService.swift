@@ -16,7 +16,7 @@ struct UrlResult: Codable {
     let thumb: String
 }
 
-struct Photo {
+struct Photo: Equatable {
     let id: String
     let size: CGSize
     let createdAt: Date?
@@ -26,17 +26,17 @@ struct Photo {
     var isLiked: Bool
 }
 
-final class ImagesListService {
-    static let shared = ImagesListService()
-//    private init() {}
+protocol ImagesListServiceProtocol: AnyObject {
+    var photos: [Photo] { get }
+    func fetchPhotosNextPage()
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void)
+}
+
+final class ImagesListService: ImagesListServiceProtocol {
     
-    // Хранилище данных
+    static let shared = ImagesListService()
     private(set) var photos: [Photo] = []
     
-    // Уведомление для UI
-    static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
-    
-    // Управление загрузкой
     private var lastLoadedPage: Int = 0
     private var task: URLSessionTask?
     
@@ -59,7 +59,7 @@ final class ImagesListService {
                     self?.photos.append(contentsOf: newPhotos)
                     self?.lastLoadedPage = nextPage
                     NotificationCenter.default.post(
-                        name: ImagesListService.didChangeNotification,
+                        name: .imagesListServiceDidChange,
                         object:
                             self
                     )
@@ -132,7 +132,7 @@ final class ImagesListService {
                     
                     self.photos = self.photos.withReplaced(itemAt: index, newValue: newPhoto)
                 }
-                NotificationCenter.default.post(name: ImagesListService.didChangeNotification, object: self)
+                NotificationCenter.default.post(name: .imagesListServiceDidChange, object: self)
                 completion(.success(()))
                 
             case .failure(let error):
@@ -144,8 +144,6 @@ final class ImagesListService {
         }
         task.resume()
     }
-    
-    
     
     private func makeLikeRequest(id: String) -> URLRequest? {
         guard let url = URL(string: "https://api.unsplash.com/photos/\(id)/like")
@@ -176,14 +174,13 @@ final class ImagesListService {
         var request = URLRequest(url: url)
         request.httpMethod = "DELETE"
         guard let token = OAuth2TokenStorage.shared.token else {
-                print("[makeUnlikeRequest]: Авторизационный токен отсутствует")
-                return nil
-            }
+            print("[makeUnlikeRequest]: Авторизационный токен отсутствует")
+            return nil
+        }
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
     }
 }
-
 
 extension ImagesListService {
     func exitImagesListService() {
@@ -191,4 +188,8 @@ extension ImagesListService {
         self.task = nil
         self.lastLoadedPage = 0
     }
+}
+
+extension Notification.Name {
+    static let imagesListServiceDidChange = Notification.Name("ImagesListService.didChangeNotification")
 }

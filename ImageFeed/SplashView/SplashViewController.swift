@@ -10,7 +10,7 @@ final class SplashViewController: UIViewController, UINavigationControllerDelega
         super.viewDidLoad()
         setupSplash()
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -40,7 +40,7 @@ final class SplashViewController: UIViewController, UINavigationControllerDelega
             imageView.translatesAutoresizingMaskIntoConstraints = false
             imageView.contentMode = .scaleAspectFit
             return imageView
-
+            
         }()
         
         view.addSubview(splashImageView)
@@ -64,9 +64,9 @@ final class SplashViewController: UIViewController, UINavigationControllerDelega
         navigationController.modalPresentationStyle = .fullScreen
         present(navigationController, animated: true)
     }
-
+    
     private func switchToTabBarController() {
-       
+        
         
         let appearace = UITabBarAppearance()
         appearace.configureWithOpaqueBackground()
@@ -137,11 +137,11 @@ SplashViewController {
 }
 
 extension
-SplashViewController: AuthViewControlletDelegate {
+SplashViewController: AuthViewControllerDelegate {
     func didAuthenticate(_ vc: AuthViewController) {
         vc.dismiss(animated: true)
-            
+        
         switchToTabBarController()
-   }
+    }
 }
 
